@@ -1,6 +1,22 @@
 import java.math.BigDecimal;
 
 public class User {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private Integer role;
+    private BigDecimal rating;
+    public User (String firstName, String lastName, String email, String password, Integer role, BigDecimal rating){
+        this.firstName= firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.rating = rating;
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,13 +72,5 @@ public class User {
     public void setRating(BigDecimal rating) {
         this.rating = rating;
     }
-
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private Integer role;
-    private BigDecimal rating;
 
 }
