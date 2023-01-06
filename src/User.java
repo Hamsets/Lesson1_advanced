@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class User {
     private Long id;
@@ -8,8 +9,9 @@ public class User {
     private String password;
     private Integer role;
     private BigDecimal rating;
-    public User (String firstName, String lastName, String email, String password, Integer role, BigDecimal rating){
-        this.firstName= firstName;
+
+    public User(String firstName, String lastName, String email, String password, Integer role, BigDecimal rating) {
+        this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
@@ -73,4 +75,24 @@ public class User {
         this.rating = rating;
     }
 
+    @Override
+    public String toString() {
+        return id + " " + firstName + " " + lastName + " " + email + " " + password + " " + role + " " + rating;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) && Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) && Objects.equals(role, user.role) &&
+                Objects.equals(rating, user.rating);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, password, role, rating);
+    }
 }
