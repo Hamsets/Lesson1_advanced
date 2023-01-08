@@ -10,8 +10,9 @@ public class UserDataAccess {
     public static final String PASSWORD = "root";
     public static final String SQL_INSERT_USER = "INSERT INTO users (first_name,last_name,email,\"password\",\"role\",rating) VALUES (?,?,?,?,?,?)";
     public static final String SQL_UPDATE_USER = "UPDATE users SET first_name=?,last_name=?,email=?,\"password\"=?,\"role\"=?,rating=? WHERE id=?";
-    public static final String SQL_Find_BY_ID = "SELECT * FROM public.users WHERE id=?";
-    public static final String SQL_SELECT_ALL = "SELECT * FROM users ORDER BY id";
+    public static final String SQL_Find_BY_ID = "SELECT u.id, u.first_name, u.last_name, u.email, u.\"password\", u.\"role\", u.rating FROM users u WHERE u.id=?";
+    public static final String SQL_Find_BY_EMAIL = "SELECT u.id, u.first_name, u.last_name, u.email, u.\"password\", u.\"role\", u.rating FROM users u WHERE u.email=?";
+    public static final String SQL_SELECT_ALL = "SELECT u.id, u.first_name, u.last_name, u.email, u.\"password\", u.\"role\", u.rating FROM users u ORDER BY u.id";
     public static final String SQL_DELETE_BY_ID = "DELETE FROM users WHERE id=?";
     public static final String SQL_SELECT_ALL_FROM_INFSCHEMA = "SELECT *   FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'users'";
 
@@ -40,8 +41,7 @@ public class UserDataAccess {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            User user = getUser(resultSet);
-            return user;
+            return getUser(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -78,7 +78,7 @@ public class UserDataAccess {
         }
     }
 
-    boolean deleteById(Long id) {
+    public boolean deleteById(Long id) {
         try (Connection connection = DriverManager.getConnection(URL_PSQL, USER, PASSWORD)) {
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID);
             statement.setLong(1, id);
@@ -93,7 +93,7 @@ public class UserDataAccess {
 
     }
 
-    void updateUserRS(User user) {
+    public void updateUserRS(User user) {
         try (Connection connection = DriverManager.getConnection(URL_PSQL, USER, PASSWORD)) {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             ResultSet result = statement.executeQuery(SQL_SELECT_ALL);
@@ -114,7 +114,7 @@ public class UserDataAccess {
         }
     }
 
-    void createUserRS(User user) {
+    public void createUserRS(User user) {
         try (Connection connection = DriverManager.getConnection(URL_PSQL, USER, PASSWORD)) {
             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             ResultSet result = statement.executeQuery(SQL_SELECT_ALL);
@@ -131,7 +131,7 @@ public class UserDataAccess {
         }
     }
 
-    void printTableInfo() {
+    public void printTableInfo() {
         try (Connection connection = DriverManager.getConnection(URL_PSQL, USER, PASSWORD)) {
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_FROM_INFSCHEMA);
             ResultSet resultSet = statement.executeQuery();
@@ -144,14 +144,24 @@ public class UserDataAccess {
                         resultSet.getString("collation_name") + "\t| " +
                         resultSet.getString("is_nullable") + "\t|");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
-    private static User getUser(ResultSet resultSet) throws SQLException {
+    public User findUserByEmail (String email) throws SQLException{
+        try (Connection connection = DriverManager.getConnection(URL_PSQL, USER, PASSWORD)) {
+            PreparedStatement statement = connection.prepareStatement(SQL_Find_BY_EMAIL);
+            statement.setString(1,email);
+            ResultSet resultSet = statement.executeQuery();
+            return getUser(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private User getUser(ResultSet resultSet) throws SQLException {
         User user = new User(
                 resultSet.getString("first_name"), resultSet.getString("last_name"),
                 resultSet.getString("email"), resultSet.getString("password"),

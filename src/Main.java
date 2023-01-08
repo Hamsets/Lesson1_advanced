@@ -59,7 +59,7 @@ public class Main {
         findAll();
 
 //  User findUserByEmail(String email)
-//        findUserByEmail ("ivi@mail.com");
+        System.out.println(findUserByEmail ("ivi@mail.com"));
 
     }
 
@@ -111,5 +111,9 @@ public class Main {
         userDAO.printTableInfo();
     }
 
-//    private static
+    private static User findUserByEmail (String email) {
+        UserDataAccess userDAO = new UserDataAccess();
+        return userDAO.findUserByEmail(email);
+
+    }
 }
